@@ -1,0 +1,202 @@
+<%- include('../partials/header') %>
+    <style>
+        .editContainer {
+            width: 100%;
+            height: 100%;
+            /* display: flex;
+        align-items: center;
+        justify-content: center; */
+
+            /* background-color: aqua; */
+        }
+
+        .editProduct {
+            width: 100%;
+            height: 100%;
+            /* background-color: antiquewhite; */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+
+        form {
+            padding: 80px 30px 10px 30px;
+            width: 100%;
+            /* height: 100%; */
+            background-color: rgba(30, 30, 29, 0.351);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border-radius: 5px;
+            color: white;
+            font-size: small;
+            font-family: sans-serif;
+        }
+
+        form input,
+        select {
+            background-color: rgba(232, 211, 184, 0.601);
+        }
+
+        .btnsave {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .save {
+            width: 30%;
+        }
+    </style>
+
+    <div class="editContainer">
+        <div class="editProduct">
+            <form id="editProduct" action="/admin/editProduct/<%= productData._id %>" method="post" enctype="multipart/form-data">
+                <label for="productName">Product Name</label>
+                <input type="text" name="productName" id="productName" value="<%= productData.productName %>">
+
+                <label for="productDescription">Product Description</label>
+                <input type="text" name="productDescription" id="productDescription"
+                    value="<%= productData.description %>" style="height: 5vh;">
+
+                <label for="productPrice">Product Price</label>
+                <input type="text" name="productPrice" id="productPrice" value="<%= productData.price %>">
+
+                <label for="quantity">Quantity</label>
+                <input type="number" name="quantity" id="quantity" value="<%= productData.quantity %>">
+
+                <label for="category">Category</label>
+                <select name="category" id="catSelect" onchange="fetchSubCategories()">
+                    <% category.forEach(category=> { %>
+                        <option value="<%= category.id %>" <%=category._id.equals(productData.categoryId) ? 'selected'
+                            : '' %>> <%= category.name %>
+                        </option>
+                        <% }); %>
+                </select>
+
+                <label for="subcategory">Subcategory</label>
+                <select name="subcategory" id="subSelect">
+                    <% subcategory.forEach(subcategory=> { %>
+                        <option value="<%= subcategory.id %>" <%=subcategory._id.equals(productData.subCategoryId)
+                            ? 'selected' : '' %>
+                            > <%= subcategory.name %>
+                        </option>
+                        <% }) %>
+                </select>
+
+                <label for="productImages">Product Images</label>
+                <div class="product-images" style="display: flex; flex-direction: row;">
+                    <% productData.productImages.forEach(image=> { %>
+                        <div>
+                            <input type="checkbox" class="removeImages" name="removeImages" value="<%= image %>">
+                            <img src="/productImages/<%= image %>" alt="productImages"
+                                style="width: 50px; height: 50px;">
+                        </div>
+                        <% }); %>
+                </div>
+                <button type="button" class="remove-btn" onclick="removeSelectedImages()"
+                    style="width: 70px; height: 40px; font-size: x-small; border-radius: 5px;">Remove</button>
+                <div style="display: flex; flex-direction: column;">
+                    <input type="file" name="newImages" id="newImages" multiple>
+                    <button type="button" onclick="addnewImages()"
+                        style="width: 70px; height: 40px; font-size: x-small; margin-top: 10px; border-radius: 5px;">Add
+                        images</button>
+                </div>
+
+                <div id="removeImagesContainer"></div>
+
+                <div class="btnsave">
+                    <button type="submit" class="save">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+
+        async function fetchSubCategories() {
+            const categorySelect = document.getElementById('catSelect')
+            const selectedCategory = categorySelect.value
+            if (selectedCategory) {
+                try {
+                    const response = await fetch(`/admin/subcategory/${selectedCategory}`)
+                        .then(response => response.json())
+                        .then((data) => {
+                            console.log(data);
+                            const subcategorySelect = document.getElementById('subSelect')
+                            subcategorySelect.innerHTML = ''
+                            data.forEach(element => {
+                                const option = document.createElement('option')
+                                option.value = element._id
+                                option.textContent = element.name
+                                subcategorySelect.appendChild(option)
+                            });
+                        })
+                    subcategorySelect.innerHTML = ''
+                } catch (error) {
+                    console.error('Error fetching subcategpries', error)
+                    subcategorySelect.innerHTML = '<option value = "">Error loading subcategories</option>'
+                }
+            } else {
+                subcategorySelect.innerHTML = '<option>Select subcategory</option>'
+            }
+        }
+
+        let checkedValues = []
+        function removeSelectedImages() {
+            const checkboxes = document.querySelectorAll('.removeImages')
+            const checkBoxArray = Array.from(checkboxes)
+            const checkedCheckboxes = checkBoxArray.filter(el => {
+                if(el.checked == true){
+                    checkedValues.push(el.value)
+                    return   el
+
+                }
+            })
+
+            console.log(checkedCheckboxes);
+            console.log(checkedValues);
+            checkedCheckboxes.forEach(checkbox => {
+                checkbox.parentElement.remove()
+            });
+
+            const removeImageesContainer = document.getElementById('removeImagesContainer')
+            removeImageesContainer.innerHTML = ''
+            checkedValues.forEach(value => {
+                const input = document.createElement('input')
+                input.type = 'hidden'
+                input.name = 'removeImages[]'
+                input.value = value
+                removeImageesContainer.appendChild(input)
+            })
+        }
+
+        function addnewImages() {
+            const newImagesInput = document.getElementById('newImages')
+            const productImagesContainer = document.querySelector('.product-images')
+            Array.from(newImagesInput.files).forEach(file => {
+                const newDiv = document.createElement('div')
+                const newCheckbox = document.createElement('input')
+                newCheckbox.type = 'checkbox'
+                newCheckbox.className = 'removeImages'
+                newCheckbox.name = 'newImages'
+                newCheckbox.value = file.name
+
+                const newImg = document.createElement('img')
+                newImg.src = URL.createObjectURL(file)
+                newImg.alt = 'newImage'
+                newImg.style.width = '50px'
+                newImg.style.height = '50px'
+
+                newDiv.appendChild(newCheckbox)
+                newDiv.appendChild(newImg)
+                productImagesContainer.appendChild(newDiv)                
+            })
+        }
+
+    </script>
+
+
+    <%- include('../partials/footer') %>

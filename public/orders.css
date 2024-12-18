@@ -1,0 +1,21 @@
+.orders{
+    width: 100%;
+    /* height: 100%; */
+}
+.orderData{
+    width: 100%;
+    height: 40px;
+    display: flex;
+    flex-direction: row;
+}
+.orderbtn1, .orderbtn2{
+    border: none;
+    height: 100%;
+    color: white;
+}
+.orderbtn2{
+    border-radius: 0 10px 0 0;
+}
+.orderbtn1{
+    border-radius: 10px 0 0 0;
+}

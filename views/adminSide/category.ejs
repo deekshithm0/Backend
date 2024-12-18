@@ -1,0 +1,58 @@
+<%- include('../partials/header') %>
+
+    <div class="category">
+        <div class="box">
+            <form id="categoryForm">
+                <div class="divelements">
+                    <label for="addCategory">Add Category : </label>
+                    <input type="text" name="addCategory" id="addCategory" required>
+                </div>
+                <div class="divelements">
+                    <label for="subcategory">Add Subcategories : </label>
+                    <input type="text" name="subcategories" id="subCats" required>
+                </div>
+                <button class="add" type="submit">ADD</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const data = {
+            categoryName: null,
+            subCategories: []
+        }
+        const form = document.getElementById('categoryForm')
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault()
+            const catName = document.getElementById('addCategory').value
+            const subCats = document.getElementById('subCats').value
+
+            data.categoryName = catName
+            const subCategoryArray = subCats.split(',')
+            subCategoryArray.forEach(element => {
+                data.subCategories.push(element.trim())
+            });
+            try {
+                const response = await fetch('/admin/category', {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+
+                const result = await response.json()
+                if (result.success) {
+                    alert('Category and Subcategory added successfully')
+                } else {
+                    alert('Error adding data...')
+                }
+            } catch (error) {
+                console.error('Error', error.message)
+                alert(' data...')
+            }
+
+        })
+    </script>
+
+    <%- include('../partials/footer') %>

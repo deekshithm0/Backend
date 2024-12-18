@@ -1,0 +1,105 @@
+body {
+   margin: 0;
+   padding: 0;
+}
+
+.container {
+   width: 100vw;
+   height: 100vh;
+   display: flex;
+   flex-direction: row;
+   background-image: url("/images/books.jpeg");
+}
+
+.sidebar {
+   width: 20%;
+   height: 100%;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   gap: 30px;
+   background-color:rgb(55, 55, 55);
+}
+.btn_action{
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: space-around;
+   gap: 50px;
+   width: 100%;
+
+}
+button{
+   height: 50px;
+   border: none;
+   background-color:rgb(55, 55, 55); 
+   color: beige;
+   border-bottom: 1px solid rgba(104, 104, 104, 0.552);
+   width: 75%;
+}
+button:hover{
+   background-color: rgba(215, 215, 215, 0.614);
+   color: rgb(71, 62, 62);
+   border-radius: 5px;
+}
+
+.logo {
+   width: calc(100% - 30px);
+   height: 70px;
+   padding-top: 10px;
+   color: rgb(255, 219, 219);
+   font-family: "Tiny5", sans-serif;
+}
+
+
+.content {
+   width: 80%;
+   height: 100%;
+   display: flex;
+   flex-direction: column;
+   backdrop-filter: blur(5px);
+}
+
+.content-head {
+   width: 100%;
+   height: 80px;
+   display: flex;
+   flex-direction: row;
+   align-items: center;
+   /* justify-content: space-between; */
+}
+   
+.welcome {
+   width: 50%;
+   padding-left: 20px;
+   font-family: sans-serif;
+   color: bisque
+}
+
+.profile {
+   width: 50%;
+   display: flex;
+   justify-content: end;
+   padding-right: 20px;
+}
+
+.profile-logo {
+   width: 25px;
+   height: 50px;
+}
+
+.content-body {
+   width: 100%;
+   height: calc(100% - 80px);
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+
+.extends {
+   width: 96%;
+   height: calc(100% - 80px);
+   border-radius: 10px;
+   background-color: rgba(215, 215, 215, 0.308);
+}
+

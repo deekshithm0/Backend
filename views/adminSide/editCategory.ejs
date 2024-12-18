@@ -1,0 +1,178 @@
+<%- include('../partials/header') %>
+
+    <div class="editCat">
+        <div class="field">
+            <form id="editCategoryForm" action="/admin/editCategory/<%= CatFind._id %>" method="post">
+                <label for="catEdit" style="color:  rgb(31, 31, 31); font-family: sans-serif;">Category Name:</label>
+                <!-- need to update and upload the category name  -->
+                <input type="text" name="CategoryEdit" id="catEdit" value="<%= CatFind.name %>">
+                <button type="submit" class="save">Save</button>
+                <h3 style="color: rgb(31, 31, 31);">Subcategories:</h3>
+                <div class="subCatsList">
+                    <% subFind.forEach(element=> { %>
+                        <div class="subList">
+                            <input class="subInput" name="subcategoryEdit<%= element._id %>" type="text"
+                                class="subcatlist" value=" <%= element.name %>">
+                            <button class="btn" style="background-color: rgb(175, 90, 90);"
+                                data-id="<%= element._id %>">drop</button>
+                            <button class="btn" type="button" id="subcategorySave" style="background-color: green;"
+                                data-id="<%= element._id %>">save</button>
+                        </div>
+                        <% }); %>
+                </div>
+                <div class="sub">
+                    <input type="text" name="addSubcategory" id="addSubcategory" placeholder="Add New Subcategory">
+                    <button type="submit" id="newSubSave" >save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+
+    <script>
+        document.querySelectorAll('#subcategorySave').forEach(element => {
+            element.addEventListener('click', async (event) => {
+                console.log('hey');
+                event.preventDefault()
+                const subId = event.target.dataset.id
+                // console.log(subId);
+                // const editedName = document.getElementsByName(`subcategoryEdit${subId}`)[0].value
+                // console.log(editedName);
+                const inputField = document.querySelector(`input[name = "subcategoryEdit${subId}"]`)
+                const subName = inputField.value.trim()
+                if (subName) {
+                    try {
+                        const response = await fetch(`/admin/editSubcategory/${subId}/${subName}`, {
+                            method: 'POST'
+                        });
+                        const result = await response.json()
+                        if (result.success) {
+                            alert('subcategory updated successfully')
+                        } else {
+                            alert('Error updating subcategory')
+                        }
+                    } catch (error) {
+                        console.error(error)
+                        alert('server error...')
+                    }
+                }
+                else {
+                    alert('Subcategory name cannot be empty')
+                }
+            })
+        });
+
+        document.getElementById('newSubSave').addEventListener('click', (event) => {
+            event.preventDefault()
+            const addSubcategory = document.getElementById('addSubcategory').vallue.trim()
+            console.log(addSubcategory);
+            if (addSubcategory) {
+                document.getElementById('editCategoryForm').submit()
+            } else {
+                alert('New subcategory name cannot be empty')
+            }
+        })
+    </script>
+
+    <style>
+        * {
+            font-family: sans-serif;
+        }
+
+        .editCat {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .field {
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #949494;
+            border-radius: 4px;
+            background-color: rgba(128, 128, 128, 0.525);
+        }
+
+        .subInput {
+            width: 100%;
+            height: 10px;
+        }
+
+        .subCatsList {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .subList {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .subcatlist {
+            width: 100%;
+            height: auto;
+            padding-left: 10px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        .btn {
+            width: 40px;
+            height: 20px;
+        }
+
+        .save {
+            width: 100%;
+        }
+
+        #addSubcategory {
+            width: 100%;
+        }
+
+        #addSubcategory::placeholder {
+            color: whitesmoke;
+            text-align: center;
+        }
+
+        .sub {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+        }
+
+        #newSubSave {
+            width: 50%;
+        }
+    </style>
+
+    <%- include('../partials/footer') %>

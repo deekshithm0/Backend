@@ -1,0 +1,180 @@
+<%- include('../partials/header') %>
+    <style>
+        #addProductForm {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* background-color: #ffffff; */
+        }
+
+        form {
+            width: 90%;
+            max-width: 700px;
+            background-color: #1a1a1a84;
+            padding: 20px;
+            border: 1px solid #1b1a1a;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            color: beige;
+            font-family: sans-serif;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            background-color: #c2c2c298;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .btns {
+            width: 250px;
+            display: flex;
+            padding-top: 20px;
+            border: none;
+            border-radius: 4px;
+            /* background-color: #007bff; */
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .btns[type="button"] {
+            background-color: #6c757d;
+        }
+
+        .btns:hover {
+            opacity: 0.9;
+        }
+
+        .btns:active {
+            transform: scale(0.98);
+        }
+    </style>
+
+    <div id="addProductForm">
+        <form action="/admin/products/addProducts" method="POST" enctype="multipart/form-data">
+            <div>
+                <label for="name">Product Name:</label>
+                <input type="text" id="name" name="productName" required>
+            </div>
+            <div>
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" required></textarea>
+            </div>
+            <div>
+                <label for="price">Price:</label>
+                <input type="number" id="price" name="price" required>
+            </div>
+            <div>
+                <label for="quantity">Quantity:</label>
+                <input type="number" id="quantity" name="quantity" required>
+            </div>
+            <div>
+                <label for="category">Category:</label>
+                <!-- <input type="text" id="category" name="category" required> -->
+                <select name="category" id="categoryId"
+                    style="width: 100%; height: 40px; background-color: #c2c2c298;border-radius: 5px;" onchange="fetchSubCategories()">
+                    <!-- <option value="">--- Select Category ---</option> -->
+                    <% categories.forEach(element=> { %>
+                        <option value="<%= element._id %>">
+                            <%= element.name %>
+                        </option>
+                        <% }); %>
+                </select>
+            </div>
+            <div>
+                <label for="subCategory">Subcategory:</label>
+                <!-- <input type="text" id="subCategory" name="subcategory" required> -->
+                <select name="subcategory" id="subCategoryId"
+                    style="width: 100%; height: 40px; background-color: #c2c2c298; border-radius: 5px;">
+                    <!-- <option value="">--- select subcategory ---</option> -->
+                    <% subCategories.forEach(element=> { %>
+                        <option value="<%= element._id %>">
+                            <%= element.name %>
+                        </option>
+                        <% }) %>
+                </select>
+            </div>
+            <div>
+                <label for="productImages">Product Images</label>
+                <input type="file" id="productImages" name="productImages" multiple required>
+            </div>
+            <div class="btns">
+                <button class="subbtn" type="submit">Save</button>
+                <button class="cancelbtn" type="button" id="cancelButton">Cancel</button>
+            </div>
+        </form>
+    </div>
+
+    <%- include('../partials/footer') %>
+
+
+        <script>
+
+            async function fetchSubCategories() {
+                const categorySelect = document.getElementById('categoryId')
+                const selectedCategory = categorySelect.value
+                // console.log('selected category',selectedCategory)                
+                if (selectedCategory) {
+                    try {
+                        const response = await fetch(`/admin/subcategory/${selectedCategory}`)
+                        // const subcategories = await response.json()
+                        .then(response => response.json())
+                        .then((data)=> {
+                            console.log(data);
+                            const subcategorySelect = document.getElementById('subCategoryId')
+                            subcategorySelect.innerHTML = ''
+                            data.forEach(subCat => {
+                            const option = document.createElement('option')
+                            option.value = subCat._id
+                            option.textContent = subCat.name
+                            subcategorySelect.appendChild(option)
+                        });
+                        console.log(response);
+                        } )
+                        subcategorySelect.innerHTML = ' '
+
+                    } catch (error) {
+                        console.error('Error fetching subcategories ', error)
+                        subcategorySelect.innerHTML = '<option value="">Error loading subcategories</option>';
+                    }
+                } else {
+                    subcategorySelect.innerHTML = '<option value="">Select Subcategory</option>';
+                }
+            }
+
+
+
+            const urlParams = new URLSearchParams(window.location.search)
+            if (urlParams.get('success') === 'true') {
+                alert('Product added successfully')
+            }
+
+
+
+        </script>

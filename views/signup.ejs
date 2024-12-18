@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup Page</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: sans-serif;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #12376f;
+        background-image: url('/images/signupBook.jpeg');
+        background-position: center;
+        background-size: cover;
+        display: flex;
+        justify-content: left;
+        align-items: center;
+        height: 100vh;
+        padding-left: 50px;
+    }
+
+    .signup-container {
+        width: 100%;
+        height: 65vh;
+        max-width: 710px;
+        padding: 20px;
+        background-color: rgba(243, 221, 179, 0.975);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .signup-form h2 {
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: #333;
+        text-align: center;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: #555;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: rgba(222, 184, 135, 0.423);
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        background-color: rgba(115, 82, 69, 0.768);
+        border: none;
+        border-radius: 4px;
+        color: bisque;
+        font-size: 16px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    button:hover {
+        background-color: burlywood;
+        color: brown;
+    }
+
+    p {
+        color: red;
+        font-size: small;
+    }
+</style>
+
+<body>
+    <div class="signup-container">
+        <div class="signup-form">
+            <h2 style="color: brown;">Sign Up</h2>
+            <form id="signupForm" action="/signup" method="post">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="userName" value="<%= formData.userName || '' %>">
+                    <% if (errors.nameError) { %>
+                        <p id="nameError">
+                            <%= errors.nameError %>
+                        </p>
+                        <% } %>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" value="<%= formData.email || '' %>">
+                    <% if (errors.emailError) { %>
+                        <p id="emailError">
+                            <%= errors.emailError %>
+                        </p>
+                        <% } %>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password">
+                    <% if (errors.passError) { %>
+                        <p id="passError">
+                            <%= errors.passError %>
+                        </p>
+                        <% } %>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirmPassword">
+                    <% if (errors.cpassError) { %>
+                        <p id="cpassError">
+                            <%= errors.cpassError %>
+                        </p>
+                        <% } %>
+                </div>
+                <button type="submit">Sign Up</button>
+            </form>
+        </div>
+    </div>
+    <script>
+
+        const formInput = document.getElementById('signup-form')
+        const userNameInput = document.getElementById('username')
+        const emailInput = document.getElementById('email')
+        const passInput = document.getElementById('password')
+        const cpassInput = document.getElementById('confirm-password')
+        const nameError = document.getElementById('nameError')
+        const emailError = document.getElementById('emailError')
+        const passError = document.getElementById('passError')
+        const cpassError = document.getElementById('cpassError')
+
+        formInput.addEventListener('submit', (event) => {
+
+            if (userNameInput.value === '') {
+                nameError.innerText = "Enter user name"
+                event.preventDefault()
+            }else if (userNameInput.value.length < 3){
+                nameError.innerText = "Ener valide username"
+                event.preventDefault()
+            }
+
+            const emailRegex = /^[a-zA-Z0-9]{5,30}@[a-zA-Z]{2,7}.[a-zA-Z]{1,5}$/;
+            if(emailInput.value === ''){
+                emailError.innerText = "Enter email"
+                event.preventDefault()
+            } else if (!emailRegex.test(emailInput.value)){
+                emailError.innerText = "Email not valid"
+                event.preventDefault()
+            }
+
+            const passRegex = /^(?=.*[!@#$%^&*()\-_+=|\\{}\[\]:;"'<>,.?/])(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{8,}$/
+            if(passInput.value === ''){
+                passError.innerText = "Enter a password"
+                event.preventDefault()
+            } else if(passRegex.test(passInput)){
+                passError.innerText = "Enter a valid password"
+                event.preventDefault()
+            } else if(passInput.value.length < 8){
+                passError.innerText = "Enter atleaset 8 characters"
+                event.preventDefault()
+            }
+
+            if(cpassInput.value === ''){
+                cpassError.innerText = "Confirm your password"
+                event.preventDefault()
+            }else if(passInput.value === cpassInput.value){
+                cpassError.innerText = "Passwords not matching"
+            }
+        })
+
+
+    </script>
+</body>
+
+</html>
